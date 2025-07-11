@@ -2,26 +2,12 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, Lock, User } from 'lucide-react';
 
-interface AdminLoginProps {
-  onCancel?: () => void;
-}
-
-const AdminLogin: React.FC<AdminLoginProps> = ({ onCancel }) => {
+const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const { login, loading } = useAuth();
-
-  const handleCancel = () => {
-    if (onCancel) {
-      onCancel();
-    } else {
-      // Navigate instantly to home without reload
-      window.location.hash = '#/';
-      window.dispatchEvent(new CustomEvent('navigate', { detail: { page: 'home' } }));
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,14 +86,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onCancel }) => {
             className="w-full bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Signing in...' : 'Sign In'}
-          </button>
-          
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="w-full mt-3 border border-gray-300 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200"
-          >
-            Cancel
           </button>
         </form>
 

@@ -71,10 +71,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">N</span>
             </div>
-          <AdminDashboard onClose={onClose} />
+            <div>
               <h3 className="font-bold text-gray-900">NIKZONE</h3>
               <p className="text-xs text-gray-500">Admin Panel</p>
-            <AdminLogin onCancel={onClose} />
+            </div>
           </div>
 
           <nav className="space-y-2">

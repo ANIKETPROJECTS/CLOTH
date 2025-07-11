@@ -21,17 +21,6 @@ interface CustomerInfo {
   paymentMethod: 'cod' | 'online';
 }
 
-interface ValidationErrors {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  pincode?: string;
-}
-
 const CheckoutForm: React.FC<CheckoutFormProps> = ({ isOpen, onClose }) => {
   const { cartItems, getTotalPrice, clearCart } = useCart();
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
@@ -46,7 +35,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ isOpen, onClose }) => {
     paymentMethod: 'cod'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   const [alert, setAlert] = useState<{
     isOpen: boolean;
     title: string;
@@ -63,94 +51,51 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ isOpen, onClose }) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
-    // Handle number-only inputs
-    if (name === 'phone' || name === 'pincode') {
-      // Only allow numbers
-      const numericValue = value.replace(/[^0-9]/g, '');
-      
-      // Limit phone to 10 digits and pincode to 6 digits
-      let limitedValue = numericValue;
-      if (name === 'phone' && numericValue.length > 10) {
-        limitedValue = numericValue.slice(0, 10);
-      } else if (name === 'pincode' && numericValue.length > 6) {
-        limitedValue = numericValue.slice(0, 6);
-      }
-      
-      setCustomerInfo(prev => ({
-        ...prev,
-        [name]: limitedValue
-      }));
-    } else {
-      setCustomerInfo(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-    
-    // Clear validation error when user starts typing
-    if (validationErrors[name as keyof ValidationErrors]) {
-      setValidationErrors(prev => ({
-        ...prev,
-        [name]: undefined
-      }));
-    }
+    setCustomerInfo(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  const validateForm = (): boolean => {
-    const errors: ValidationErrors = {};
-    
-    // Required field validation
-    if (!customerInfo.firstName.trim()) {
-      errors.firstName = 'First name is required';
-    }
-    
-    if (!customerInfo.lastName.trim()) {
-      errors.lastName = 'Last name is required';
-    }
-    
-    if (!customerInfo.email.trim()) {
-      errors.email = 'Email is required';
-    } else {
-      // Email format validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(customerInfo.email)) {
-        errors.email = 'Please enter a valid email address';
+  const validateForm = () => {
+    const required = ['firstName', 'lastName', 'email', 'phone', 'address', 'city', 'state', 'pincode'];
+    for (const field of required) {
+      if (!customerInfo[field as keyof CustomerInfo]) {
+        return false;
       }
     }
     
-    if (!customerInfo.phone.trim()) {
-      errors.phone = 'Phone number is required';
-    } else if (customerInfo.phone.length !== 10) {
-      errors.phone = 'Phone number must be exactly 10 digits';
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customerInfo.email)) {
+      return false;
     }
     
-    if (!customerInfo.address.trim()) {
-      errors.address = 'Address is required';
+    // Phone validation (10 digits)
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(customerInfo.phone)) {
+      return false;
     }
     
-    if (!customerInfo.city.trim()) {
-      errors.city = 'City is required';
+    // Pincode validation (6 digits)
+    const pincodeRegex = /^[0-9]{6}$/;
+    if (!pincodeRegex.test(customerInfo.pincode)) {
+      return false;
     }
     
-    if (!customerInfo.state.trim()) {
-      errors.state = 'State is required';
-    }
-    
-    if (!customerInfo.pincode.trim()) {
-      errors.pincode = 'Pincode is required';
-    } else if (customerInfo.pincode.length !== 6) {
-      errors.pincode = 'Pincode must be exactly 6 digits';
-    }
-    
-    setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) {
+      setAlert({
+        isOpen: true,
+        title: 'Invalid Information',
+        message: 'Please fill in all required fields with valid information.',
+        type: 'warning'
+      });
       return;
     }
 
@@ -287,14 +232,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ isOpen, onClose }) => {
                       name="firstName"
                       value={customerInfo.firstName}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent ${
-                        validationErrors.firstName ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                       required
                     />
-                    {validationErrors.firstName && (
-                      <p className="mt-1 text-sm text-red-600">{validationErrors.firstName}</p>
-                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -305,14 +245,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ isOpen, onClose }) => {
                       name="lastName"
                       value={customerInfo.lastName}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent ${
-                        validationErrors.lastName ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                       required
                     />
-                    {validationErrors.lastName && (
-                      <p className="mt-1 text-sm text-red-600">{validationErrors.lastName}</p>
-                    )}
                   </div>
                 </div>
 
@@ -325,14 +260,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ isOpen, onClose }) => {
                     name="email"
                     value={customerInfo.email}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent ${
-                      validationErrors.email ? 'border-red-500' : 'border-gray-300'
-                    }`}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                     required
                   />
-                  {validationErrors.email && (
-                    <p className="mt-1 text-sm text-red-600">{validationErrors.email}</p>
-                  )}
                 </div>
 
                 <div>
@@ -340,20 +270,14 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ isOpen, onClose }) => {
                     Phone Number *
                   </label>
                   <input
-                    type="text"
+                    type="tel"
                     name="phone"
                     value={customerInfo.phone}
                     onChange={handleInputChange}
                     placeholder="10-digit mobile number"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent ${
-                      validationErrors.phone ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    maxLength={10}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                     required
                   />
-                  {validationErrors.phone && (
-                    <p className="mt-1 text-sm text-red-600">{validationErrors.phone}</p>
-                  )}
                 </div>
 
                 <div>
@@ -365,14 +289,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ isOpen, onClose }) => {
                     value={customerInfo.address}
                     onChange={handleInputChange}
                     rows={3}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent ${
-                      validationErrors.address ? 'border-red-500' : 'border-gray-300'
-                    }`}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                     required
                   />
-                  {validationErrors.address && (
-                    <p className="mt-1 text-sm text-red-600">{validationErrors.address}</p>
-                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -385,14 +304,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ isOpen, onClose }) => {
                       name="city"
                       value={customerInfo.city}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent ${
-                        validationErrors.city ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                       required
                     />
-                    {validationErrors.city && (
-                      <p className="mt-1 text-sm text-red-600">{validationErrors.city}</p>
-                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -403,14 +317,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ isOpen, onClose }) => {
                       name="state"
                       value={customerInfo.state}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent ${
-                        validationErrors.state ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                       required
                     />
-                    {validationErrors.state && (
-                      <p className="mt-1 text-sm text-red-600">{validationErrors.state}</p>
-                    )}
                   </div>
                 </div>
 
@@ -424,15 +333,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ isOpen, onClose }) => {
                     value={customerInfo.pincode}
                     onChange={handleInputChange}
                     placeholder="6-digit pincode"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent ${
-                      validationErrors.pincode ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    maxLength={6}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                     required
                   />
-                  {validationErrors.pincode && (
-                    <p className="mt-1 text-sm text-red-600">{validationErrors.pincode}</p>
-                  )}
                 </div>
 
                 {/* Payment Method */}
