@@ -12,9 +12,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   const { isAuthenticated } = useAuth();
 
   const handleBackToWebsite = () => {
-    // Clear the hash and reload to ensure we go back to home
-    window.location.hash = '';
-    window.location.reload();
+    // Navigate instantly to home without reload
+    window.location.hash = '#/';
+    window.dispatchEvent(new CustomEvent('navigate', { detail: { page: 'home' } }));
   };
 
   return (

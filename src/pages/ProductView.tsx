@@ -344,7 +344,7 @@ const ProductView = () => {
                 className="w-full bg-black text-white py-4 rounded-lg font-medium hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center space-x-2 text-lg"
               >
                 <ShoppingBag className="w-6 h-6" />
-                <span>ADD TO BAG</span>
+                <span>ADD TO CART</span>
               </button>
               <button
                 onClick={() => setIsFavorite(!isFavorite)}
