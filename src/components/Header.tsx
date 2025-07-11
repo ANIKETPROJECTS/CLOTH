@@ -7,6 +7,32 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { getTotalItems } = useCart();
+  
+  // Get current page from URL hash
+  const getCurrentPage = () => {
+    const hash = window.location.hash.slice(2); // Remove '#/'
+    if (hash.startsWith('product/')) {
+      return 'product';
+    }
+    return hash || 'home';
+  };
+  
+  const [currentPage, setCurrentPage] = useState(getCurrentPage());
+  
+  // Listen for hash changes to update active state
+  React.useEffect(() => {
+    const handleHashChange = () => {
+      setCurrentPage(getCurrentPage());
+    };
+    
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('navigate', handleHashChange);
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('navigate', handleHashChange);
+    };
+  }, []);
 
   const navigationItems = [
     'SUMMER 2025',
@@ -19,6 +45,7 @@ const Header = () => {
   ];
 
   const handleNavClick = (item: string) => {
+    setCurrentPage(item.toLowerCase().replace(/\s+/g, '-'));
     navigateToPage(item);
   };
 
@@ -30,6 +57,12 @@ const Header = () => {
 
   const handleCartClick = () => {
     navigateToPage('cart');
+  };
+  
+  // Helper function to check if nav item is active
+  const isActiveNavItem = (item: string) => {
+    const itemPage = item.toLowerCase().replace(/\s+/g, '-');
+    return currentPage === itemPage;
   };
 
   return (
@@ -58,9 +91,16 @@ const Header = () => {
               <button
                 key={item}
                 onClick={() => handleNavClick(item)}
-                className="text-sm font-medium text-gray-700 hover:text-black transition-colors duration-200 tracking-wide whitespace-nowrap"
+                className={`text-sm font-medium transition-colors duration-200 tracking-wide whitespace-nowrap relative ${
+                  isActiveNavItem(item)
+                    ? 'text-black font-bold'
+                    : 'text-gray-700 hover:text-black'
+                }`}
               >
                 {item}
+                {isActiveNavItem(item) && (
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-black rounded-full"></div>
+                )}
               </button>
             ))}
           </nav>
@@ -124,7 +164,11 @@ const Header = () => {
                     handleNavClick(item);
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left px-4 py-2 text-sm font-medium text-gray-700 hover:text-black hover:bg-gray-50 transition-colors duration-200 whitespace-nowrap"
+                  className={`block w-full text-left px-4 py-2 text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
+                    isActiveNavItem(item)
+                      ? 'text-black font-bold bg-gray-100'
+                      : 'text-gray-700 hover:text-black hover:bg-gray-50'
+                  }`}
                 >
                   {item}
                 </button>
