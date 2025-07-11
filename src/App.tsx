@@ -30,10 +30,24 @@ function App() {
   useEffect(() => {
     const handleNavigation = () => {
       setCurrentPage(getPageFromHash());
+      // Scroll to top whenever page changes
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'auto'
+      });
     };
 
     const handleHashChange = () => {
       setCurrentPage(getPageFromHash());
+      // Scroll to top whenever hash changes
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'auto'
+        });
+      }, 0);
     };
 
     // Listen for custom navigation events

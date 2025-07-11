@@ -6,6 +6,15 @@ export const navigateToPage = (pageName: string) => {
   
   // Trigger a custom event to handle navigation
   window.dispatchEvent(new CustomEvent('navigate', { detail: { page } }));
+  
+  // Scroll to top immediately
+  setTimeout(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'auto'
+    });
+  }, 0);
 };
 
 export const getPageFromHash = (): string => {
