@@ -17,9 +17,10 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onCancel }) => {
     if (onCancel) {
       onCancel();
     } else {
-      // Navigate instantly to home without reload
+      // Navigate instantly to home
       window.location.hash = '#/';
-      window.dispatchEvent(new CustomEvent('navigate', { detail: { page: 'home' } }));
+      // Force page change by triggering hashchange event
+      window.dispatchEvent(new Event('hashchange'));
     }
   };
 
