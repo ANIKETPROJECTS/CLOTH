@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Header from '../components/Header';
 import ProductFilter from '../components/ProductFilter';
 import Breadcrumb from '../components/Breadcrumb';
 import { ArrowLeft, X, Heart, Star } from 'lucide-react';
@@ -68,8 +67,6 @@ const NewArrivals = () => {
 
   return (
     <div className="bg-white">
-      <Header />
-      
       {/* Navigation Bar */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

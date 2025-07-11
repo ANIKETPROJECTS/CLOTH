@@ -130,40 +130,23 @@ function App() {
     }
   };
 
-  const renderPageWithTransition = () => {
-    // Pages that include their own header (no separate header needed)
-    const pagesWithOwnHeader = ['product', 't-shirts', 'shirts', 'bottoms', 'jackets', 'accessories', 'new-arrivals', 'summer-2025', 'cart', 'admin'];
-    
-    if (pagesWithOwnHeader.includes(currentPage)) {
-      return (
-        <div className={`transition-opacity duration-300 ease-in-out ${
-          isTransitioning ? 'opacity-0' : 'opacity-100'
-        }`}>
-          {renderPage()}
-        </div>
-      );
-    }
-    
-    // Home page - header and footer separate from content
-    return (
-      <>
-        <Header />
-        <div className={`transition-opacity duration-300 ease-in-out ${
-          isTransitioning ? 'opacity-0' : 'opacity-100'
-        }`}>
-          {renderPage()}
-        </div>
-      </>
-    );
-  };
   return (
     <AuthProvider>
       <ProductProvider>
         <CartProvider>
           <div className="min-h-screen flex flex-col">
+            {/* Static Header - only hidden on admin page */}
+            {currentPage !== 'admin' && <Header />}
+            
             <div className="flex-1">
-              {renderPageWithTransition()}
+              <div className={`transition-opacity duration-300 ease-in-out ${
+                isTransitioning ? 'opacity-0' : 'opacity-100'
+              }`}>
+                {renderPage()}
+              </div>
             </div>
+            
+            {/* Static Footer - only hidden on admin page */}
             {currentPage !== 'admin' && <Footer />}
             <ScrollToTop />
           </div>

@@ -3,7 +3,6 @@ import { X, Heart, ShoppingBag, Star, ChevronLeft, ChevronRight, Plus, Minus, Ar
 import { Product } from '../types/Product';
 import { useProducts } from '../contexts/ProductContext';
 import { useCart } from '../contexts/CartContext';
-import Header from '../components/Header';
 import CustomAlert from '../components/CustomAlert';
 
 const ProductView = () => {
@@ -68,8 +67,7 @@ const ProductView = () => {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-white">
-        <Header />
+      <div className="bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <button
             onClick={() => window.history.back()}
@@ -157,9 +155,7 @@ const ProductView = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      
+    <div className="bg-white">
       {/* Breadcrumb Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
