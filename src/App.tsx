@@ -117,8 +117,7 @@ function App() {
         return <AdminPanel onClose={() => navigateToPage('home')} />;
       default:
         return (
-          <>
-            <Header />
+          <div>
             <HeroCarousel />
             <CategoryCollections />
             <AppPromotion />
@@ -126,20 +125,44 @@ function App() {
             <NewArrivalsSection />
             <HappyCustomers />
             <StoreLocationSection />
-          </>
+          </div>
         );
     }
   };
 
+  const renderPageWithTransition = () => {
+    // Pages that include their own header (no separate header needed)
+    const pagesWithOwnHeader = ['product', 't-shirts', 'shirts', 'bottoms', 'jackets', 'accessories', 'new-arrivals', 'summer-2025', 'cart', 'admin'];
+    
+    if (pagesWithOwnHeader.includes(currentPage)) {
+      return (
+        <div className={`transition-opacity duration-300 ease-in-out ${
+          isTransitioning ? 'opacity-0' : 'opacity-100'
+        }`}>
+          {renderPage()}
+        </div>
+      );
+    }
+    
+    // Home page - header and footer separate from content
+    return (
+      <>
+        <Header />
+        <div className={`transition-opacity duration-300 ease-in-out ${
+          isTransitioning ? 'opacity-0' : 'opacity-100'
+        }`}>
+          {renderPage()}
+        </div>
+      </>
+    );
+  };
   return (
     <AuthProvider>
       <ProductProvider>
         <CartProvider>
-          <div className={`min-h-screen flex flex-col transition-opacity duration-300 ease-in-out ${
-            isTransitioning ? 'opacity-0' : 'opacity-100'
-          }`}>
+          <div className="min-h-screen flex flex-col">
             <div className="flex-1">
-              {renderPage()}
+              {renderPageWithTransition()}
             </div>
             {currentPage !== 'admin' && <Footer />}
             <ScrollToTop />
