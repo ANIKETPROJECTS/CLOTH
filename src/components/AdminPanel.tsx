@@ -11,6 +11,11 @@ interface AdminPanelProps {
 const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
   const { isAuthenticated } = useAuth();
 
+  const handleBackToWebsite = () => {
+    window.location.hash = '#/';
+    window.dispatchEvent(new CustomEvent('navigate', { detail: { page: 'home' } }));
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -19,7 +24,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <button
-                onClick={onClose}
+                onClick={handleBackToWebsite}
                 className="flex items-center space-x-2 text-gray-600 hover:text-black transition-colors duration-200"
               >
                 <ArrowLeft className="w-5 h-5" />
@@ -37,7 +42,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onClose }) => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isAuthenticated ? (
-          <AdminDashboard onClose={onClose} />
+          <AdminDashboard onClose={handleBackToWebsite} />
         ) : (
           <div className="max-w-md mx-auto">
             <AdminLogin />
