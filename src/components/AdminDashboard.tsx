@@ -19,10 +19,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
   const handleLogout = () => {
     logout();
-    // Navigate instantly to home
-    window.location.hash = '#/';
-    // Force page change
-    window.dispatchEvent(new Event('hashchange'));
+    onClose();
   };
 
   const stats = [
