@@ -26,28 +26,58 @@ import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [nextPage, setNextPage] = useState('home');
 
   useEffect(() => {
     const handleNavigation = () => {
-      setCurrentPage(getPageFromHash());
-      // Scroll to top whenever page changes
-      window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'auto'
-      });
+      const newPage = getPageFromHash();
+      if (newPage !== currentPage) {
+        setIsTransitioning(true);
+        setNextPage(newPage);
+        
+        // After fade out completes, change page and fade in
+        setTimeout(() => {
+          setCurrentPage(newPage);
+          // Scroll to top when page changes
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'auto'
+          });
+          
+          // Start fade in
+          setTimeout(() => {
+            setIsTransitioning(false);
+          }, 50);
+        }, 150);
+      }
     };
 
     const handleHashChange = () => {
-      setCurrentPage(getPageFromHash());
-      // Scroll to top whenever hash changes
-      setTimeout(() => {
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'auto'
-        });
-      }, 0);
+      const newPage = getPageFromHash();
+      if (newPage !== currentPage) {
+        setIsTransitioning(true);
+        setNextPage(newPage);
+        
+        // After fade out completes, change page and fade in
+        setTimeout(() => {
+          setCurrentPage(newPage);
+          // Scroll to top when hash changes
+          setTimeout(() => {
+            window.scrollTo({
+              top: 0,
+              left: 0,
+              behavior: 'auto'
+            });
+          }, 0);
+          
+          // Start fade in
+          setTimeout(() => {
+            setIsTransitioning(false);
+          }, 50);
+        }, 150);
+      }
     };
 
     // Listen for custom navigation events
@@ -105,7 +135,9 @@ function App() {
     <AuthProvider>
       <ProductProvider>
         <CartProvider>
-          <div className="min-h-screen flex flex-col">
+          <div className={`min-h-screen flex flex-col transition-opacity duration-300 ease-in-out ${
+            isTransitioning ? 'opacity-0' : 'opacity-100'
+          }`}>
             <div className="flex-1">
               {renderPage()}
             </div>
