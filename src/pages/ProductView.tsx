@@ -41,6 +41,14 @@ const ProductView = () => {
       setQuantity(1);
       setIsFavorite(false);
       setActiveTab('specifications');
+      // Scroll to top on initial load
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'auto'
+        });
+      }, 50);
     }
   }, [products, window.location.hash]);
 
@@ -59,8 +67,14 @@ const ProductView = () => {
         setQuantity(1);
         setIsFavorite(false);
         setActiveTab('specifications');
-        // Scroll to top when product changes
-        window.scrollTo(0, 0);
+        // Scroll to top when product changes - use setTimeout to ensure DOM is updated
+        setTimeout(() => {
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+          });
+        }, 100);
       }
     };
 
