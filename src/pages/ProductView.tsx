@@ -35,7 +35,37 @@ const ProductView = () => {
     if (productId) {
       const foundProduct = products.find(p => p._id === productId);
       setProduct(foundProduct || null);
+      // Reset component state when product changes
+      setSelectedImageIndex(0);
+      setSelectedSize('');
+      setQuantity(1);
+      setIsFavorite(false);
+      setActiveTab('specifications');
     }
+  }, [products, window.location.hash]);
+
+  // Listen for hash changes to update product
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      const productId = hash.split('/product/')[1];
+      
+      if (productId) {
+        const foundProduct = products.find(p => p._id === productId);
+        setProduct(foundProduct || null);
+        // Reset component state when product changes
+        setSelectedImageIndex(0);
+        setSelectedSize('');
+        setQuantity(1);
+        setIsFavorite(false);
+        setActiveTab('specifications');
+        // Scroll to top when product changes
+        window.scrollTo(0, 0);
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, [products]);
 
   if (!product) {
@@ -498,7 +528,6 @@ const ProductView = () => {
                   className="group cursor-pointer"
                   onClick={() => {
                     window.location.hash = `#/product/${similarProduct._id}`;
-                    window.scrollTo(0, 0);
                   }}
                 >
                   <div className="relative aspect-[3/4] bg-gray-100 rounded-lg overflow-hidden mb-3">
